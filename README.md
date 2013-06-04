@@ -1,4 +1,4 @@
 PNPNeuron
 =========
 
-A simply PNP simulator for neurons.
+A simply Linux x64 PNP simulator for neurons.
