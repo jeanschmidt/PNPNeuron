@@ -1,7 +1,7 @@
 CC=g++ -Werror
 TESTADOR=bin/PNPNTest
 SIMULATOR=bin/PNPNeuron
-CONFIG_FILE=config/defaults.cfg config/physics_constants.cfg
+CONFIG_FILE=config/defaults.cfg config/physics_constants.cfg config/output.cfg
 
 OBJETOS=src/RenderView.o src/Standarts.o src/main.o src/ModelLoad.o src/MainEngine.o src/Membrana.o src/EletricPotentialComputer.o src/GradientComputer.o src/Config.o
 TEST_OBJ=src/mainTest.o
@@ -33,7 +33,7 @@ DEFINES = $(TESTDEFINE)
 
 all: clean $(TESTADOR) $(SIMULATOR) run
 clean: cleandocs
-	rm -rf src/*.o $(SIMULATOR) $(TESTADOR) gmon.out results src/*~ log.txt
+	rm -rf src/*.o $(SIMULATOR) $(TESTADOR) gmon.out results src/*~ config/*~ log.txt
 run:
 	@printf "running app\n"
 	@mkdir results

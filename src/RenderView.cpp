@@ -1,8 +1,9 @@
+#include <stdio.h>
+#include <mgl2/mgl.h>
+
 #include "RenderView.h"
 #include "Standarts.h"
-#include "stdio.h"
-
-#include <mgl2/mgl.h>
+#include "Config.h"
 
 void RenderView::renderArea(void) {
     if(universo == NULL) {
@@ -25,15 +26,19 @@ void RenderView::renderArea(void) {
         posicao = universo->getPosicao();
     }
 
+    ::std::string path(defaultDirectory);
+    path += "/";
+    path += neuralModelFile;
+    path += ".png";
+
     printf("*Rendering area...\n");
-    mglGraph *gr = new mglGraph(0,800,800);
-    gr->Title("Neural Model");
-    gr->Rotate(60,40);  
+    mglGraph *gr = new mglGraph(0,res_x,res_y);
+    gr->Title(neuralModelTitle);
+    gr->Rotate(rotate_x,rotate_y);  
     gr->Box(); 
     gr->Alpha(true); 
     gr->Surf3(dat);
-//    gr->Cloud(dat, "wyrRk");
-    gr->WritePNG("results/area.png");
+    gr->WritePNG(path.c_str());
 
     delete gr;
 }
@@ -59,13 +64,18 @@ void RenderView::renderMembrane(void) {
 
     printf("*Rendering Membrane...\n");
 
-    mglGraph *gr = new mglGraph(0,800,800);
-    gr->Title("Celular Membrane");
-    gr->Rotate(60,40);
+    ::std::string path(defaultDirectory);
+    path += "/";
+    path += neuralMembraneFile;
+    path += ".png";
+
+    mglGraph *gr = new mglGraph(0,res_x,res_y);
+    gr->Title(neuralMembraneTitle);
+    gr->Rotate(rotate_x,rotate_y);
     gr->Box();
     gr->Alpha(true);
     gr->Surf3(dat);
-    gr->WritePNG("results/membrana.png");
+    gr->WritePNG(path.c_str());
 
     delete gr;
 }
@@ -166,19 +176,72 @@ void RenderView::renderEPotential(unsigned frame) {
     }
 
     printf("*Rendering Eletric Potential %d\n", frame);
-    char name[128];
-    snprintf(name, 128, "results/epotencial_%d.png", frame);
+    char name[6];
+    snprintf(name, sizeof(name), "_%03d", frame);
 
-    mglGraph *gr = new mglGraph(0, 800, 800);
-    gr->Title("Eletric Potential");
-    gr->Rotate(60,40);
+    ::std::string path(defaultDirectory);
+    path += "/";
+    path += neuralEletricFile;
+    path += name;
+    path += ".png";
+
+    mglGraph *gr = new mglGraph(0, res_x, res_y);
+    gr->Title(neuralEletricTitle);
+    gr->Rotate(rotate_x,rotate_y);
     gr->Box(); 
     gr->Alpha(true);
 //http://mathgl.sourceforge.net/doc_en/doc_en_106.html#Color-styles
-//    gr->Cloud(dat, "wyrRk");
-    gr->Cloud(dat, "rywgb");
-    gr->WritePNG(name);
+    gr->Cloud(dat, colorPattern);
+    gr->WritePNG(path.c_str());
     delete gr;
 }
 
+void RenderView::init(void) {
+    neuralModelTitle = "Neural Model";
+    neuralMembraneTitle = "Celular Membrane";
+    neuralEletricTitle = "Eletric Potential";
+    neuralModelFile = "area";
+    neuralMembraneFile = "membrane";
+    neuralEletricFile = "eletric_potential";
+    defaultDirectory = "results";
+    colorPattern = "rywgb";
+
+    const ConfigList::Config *c;
+
+    c = ConfigHolder::get()->get("out_color_pattern");
+    if(c) colorPattern = c->value;
+
+    c = ConfigHolder::get()->get("out_res_x");
+    if(c) res_x = atoi(c->value);
+
+    c = ConfigHolder::get()->get("out_res_y");
+    if(c) res_y = atoi(c->value);
+
+    c = ConfigHolder::get()->get("out_rotate_x");
+    if(c) rotate_x = atoi(c->value);
+
+    c = ConfigHolder::get()->get("out_rotate_y");
+    if(c) rotate_y = atoi(c->value);
+
+    c = ConfigHolder::get()->get("out_neuralModelTitle");
+    if(c) neuralModelTitle = c->value;
+
+    c = ConfigHolder::get()->get("out_neuralMembraneTile");
+    if(c) neuralMembraneTitle = c->value;
+
+    c = ConfigHolder::get()->get("out_neuralEletricTile");
+    if(c) neuralEletricTitle = c->value;
+
+    c = ConfigHolder::get()->get("out_neuralModel_file");
+    if(c) neuralEletricFile = c->value;
+
+    c = ConfigHolder::get()->get("out_neuralMembrane_file");
+    if(c) neuralMembraneFile = c->value;
+
+    c = ConfigHolder::get()->get("out_neuralEletric_file");
+    if(c) neuralEletricFile = c->value;
+
+    c = ConfigHolder::get()->get("out_directory");
+    if(c) defaultDirectory = c->value;
+}
 
