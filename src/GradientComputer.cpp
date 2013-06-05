@@ -236,7 +236,7 @@ void GradientComputer::log(Particula *part) {
         return;
 
     char line[512];
-//    snprintf(line, 512, 
+//    snfprintf(stderr,line, 512, 
 //       "Na %f K %f Cl %f Ca %f -- %f Volts"
 //       " -- %d %d %d %d %d %d --- "
 //       "g Na %f-%f-%f g K (%f)-(%f)-(%f)\n", 
@@ -301,7 +301,7 @@ void GradientComputer::updateMembrane(Particula &um, Posicao &um_p, Particula &d
         Membrana &mem = um.paredeCelular[index];
         switch( mem.Direcao(um_p, dois_p) ) {
             case Membrana::NOT_CONNECTED:
-               printf("   *ERRO SEM SENTIDO!\n");
+               fprintf(stderr,"   *ERRO SEM SENTIDO!\n");
                exit(__LINE__);
             case Membrana::FIRST_OUTSIDE:
                mem.update(um.eletric_potential - dois.eletric_potential );
@@ -318,7 +318,7 @@ void GradientComputer::updateGradientMembrane(Particula &um, Posicao &um_p, Part
         Membrana &mem = um.paredeCelular[index];
         switch( mem.Direcao(um_p, dois_p) ) {
             case Membrana::NOT_CONNECTED:
-                printf("     *ERRO SEM SENTIDO 2\n");
+                fprintf(stderr,"     *ERRO SEM SENTIDO 2\n");
                 exit(__LINE__);
             case Membrana::FIRST_OUTSIDE:
                 um.g_sodio[index]     += mem.pumpNa();

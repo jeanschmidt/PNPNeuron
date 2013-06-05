@@ -58,6 +58,7 @@ class ConfigHolder {
        }
 
        bool parseConfig(const char *file);
+       bool parseConfig(FILE *file);
 
     protected:
        ConfigList *myList;

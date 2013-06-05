@@ -63,17 +63,17 @@ ModelLoad::LoadStatus ModelLoad::load(void) {
         snprintf(path, sizeof(path), "%s/%s%d.bmp", scan_path, name, a);
 
         SDL_Surface *surf = IMG_Load(path);
-        printf("  ->%s\n", path);
+        fprintf(stderr,"  ->%s\n", path);
         if(!surf) {
-            printf("Error on opening file! %s\n", path);
+            fprintf(stderr,"Error on opening file! %s\n", path);
             return GENERAL_ERR;
         }
         if(surf->w != RESOLUTION || surf->h != RESOLUTION) {
-            printf("Error on opening file! %s - Image size don't match.\n", path);
+            fprintf(stderr,"Error on opening file! %s - Image size don't match.\n", path);
             return IMG_DIMEN_ERR;
         }
         if(surf->format->BitsPerPixel != 24) {
-            printf("Error, file %s don't have 24 bpp! (it is %d)\n", path, surf->format->BitsPerPixel);
+            fprintf(stderr,"Error, file %s don't have 24 bpp! (it is %d)\n", path, surf->format->BitsPerPixel);
             return IMG_DIMEN_ERR;
         }
 
@@ -157,10 +157,10 @@ void ModelLoad::addExpanded(Posicao &pos, Particula &part) {
 void ModelLoad::createCitoplasm(void) {
      ::std::map< Posicao, Particula > tempMap;
      discoveryEdges( tempMap );
-     printf("*Merging new edges on actual memory\n");
+     fprintf(stderr,"*Merging new edges on actual memory\n");
      universo->mergeWith( tempMap );
 
-     printf("*Now creating citoplasm...\n");
+     fprintf(stderr,"*Now creating citoplasm...\n");
      for(int a=0; a<10; a++) {
          tempMap.clear();
          coverWithSurface( tempMap );
@@ -227,7 +227,7 @@ void ModelLoad::coverWithSurface( ::std::map< Posicao, Particula > &tmpmem ) {
 }
 
 void ModelLoad::discoveryEdges( ::std::map< Posicao, Particula > &tmpmem ) {
-     printf("*Loading and discovering edges..\n");
+     fprintf(stderr,"*Loading and discovering edges..\n");
 
      Particula extracelular;
      extracelular.c_sodio = 1.1;

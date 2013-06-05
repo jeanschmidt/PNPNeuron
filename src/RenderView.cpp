@@ -7,7 +7,7 @@
 
 void RenderView::renderArea(void) {
     if(universo == NULL) {
-        printf("No universe to copile, quiting...\n");
+        fprintf(stderr,"No universe to copile, quiting...\n");
         return;
     }
 
@@ -17,7 +17,7 @@ void RenderView::renderArea(void) {
     Particula *particula = universo->getParticula();
     Posicao *posicao = universo->getPosicao();
 
-    printf("*Loading and preparing area data..\n");
+    fprintf(stderr,"*Loading and preparing area data..\n");
 
     while( particula && posicao ) {
         dat.a[ (posicao->x+10) + (RESOLUTION+20)*((posicao->y+10) + (RESOLUTION+20)*(posicao->z+10)) ] = 1.0f;
@@ -31,13 +31,28 @@ void RenderView::renderArea(void) {
     path += neuralModelFile;
     path += ".png";
 
-    printf("*Rendering area...\n");
+    fprintf(stderr,"*Rendering area...\n");
     mglGraph *gr = new mglGraph(0,res_x,res_y);
     gr->Title(neuralModelTitle);
-    gr->Rotate(rotate_x,rotate_y);  
-    gr->Box(); 
-    gr->Alpha(true); 
-    gr->Surf3(dat);
+
+    if(angle_3d) {
+        gr->SubPlot(2,1,0);
+        gr->Rotate(rotate_x,rotate_y+angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Surf3(dat);
+
+        gr->SubPlot(2,1,1);
+        gr->Rotate(rotate_x,rotate_y-angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Surf3(dat);
+    } else {
+        gr->Rotate(rotate_x,rotate_y);  
+        gr->Box(); 
+        gr->Alpha(true); 
+        gr->Surf3(dat);
+    }
     gr->WritePNG(path.c_str());
 
     delete gr;
@@ -45,7 +60,7 @@ void RenderView::renderArea(void) {
 
 void RenderView::renderMembrane(void) {
     if(universo == NULL) {
-        printf("No universe to render, quitting...\n");
+        fprintf(stderr,"No universe to render, quitting...\n");
         return;
     }
 
@@ -62,7 +77,7 @@ void RenderView::renderMembrane(void) {
         posicao = universo->getPosicao();
     }
 
-    printf("*Rendering Membrane...\n");
+    fprintf(stderr,"*Rendering Membrane...\n");
 
     ::std::string path(defaultDirectory);
     path += "/";
@@ -71,10 +86,26 @@ void RenderView::renderMembrane(void) {
 
     mglGraph *gr = new mglGraph(0,res_x,res_y);
     gr->Title(neuralMembraneTitle);
-    gr->Rotate(rotate_x,rotate_y);
-    gr->Box();
-    gr->Alpha(true);
-    gr->Surf3(dat);
+
+    if(angle_3d) {
+        gr->SubPlot(2,1,0);
+        gr->Rotate(rotate_x,rotate_y+angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Surf3(dat);
+
+        gr->SubPlot(2,1,1);
+        gr->Rotate(rotate_x,rotate_y-angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Surf3(dat);
+    } else {
+        gr->Rotate(rotate_x,rotate_y);  
+        gr->Box(); 
+        gr->Alpha(true); 
+        gr->Surf3(dat);
+    }
+
     gr->WritePNG(path.c_str());
 
     delete gr;
@@ -82,11 +113,11 @@ void RenderView::renderMembrane(void) {
 
 void RenderView::renderEPotential(unsigned frame) {
     if(universo == NULL) {
-        printf("No universe to render, quitting...\n");
+        fprintf(stderr,"No universe to render, quitting...\n");
         return;
     }
 
-    printf("*Preparing to render eletric potencial %d\n", frame);
+    fprintf(stderr,"*Preparing to render eletric potencial %d\n", frame);
     mglData dat(RESOLUTION+20, RESOLUTION+20, RESOLUTION+20);
 
     universo->rewind();
@@ -175,7 +206,7 @@ void RenderView::renderEPotential(unsigned frame) {
         universo->next();
     }
 
-    printf("*Rendering Eletric Potential %d\n", frame);
+    fprintf(stderr,"*Rendering Eletric Potential %d\n", frame);
     char name[6];
     snprintf(name, sizeof(name), "_%03d", frame);
 
@@ -188,10 +219,24 @@ void RenderView::renderEPotential(unsigned frame) {
     mglGraph *gr = new mglGraph(0, res_x, res_y);
     gr->Title(neuralEletricTitle);
     gr->Rotate(rotate_x,rotate_y);
-    gr->Box(); 
-    gr->Alpha(true);
-//http://mathgl.sourceforge.net/doc_en/doc_en_106.html#Color-styles
-    gr->Cloud(dat, colorPattern);
+    if(angle_3d) {
+        gr->SubPlot(2,1,0);
+        gr->Rotate(rotate_x,rotate_y+angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Cloud(dat, colorPattern);
+
+        gr->SubPlot(2,1,1);
+        gr->Rotate(rotate_x,rotate_y-angle_3d);
+        gr->Box();
+        gr->Alpha(true);
+        gr->Cloud(dat, colorPattern);
+    } else {
+        gr->Rotate(rotate_x,rotate_y);  
+        gr->Box(); 
+        gr->Alpha(true); 
+        gr->Cloud(dat, colorPattern);
+    }
     gr->WritePNG(path.c_str());
     delete gr;
 }
@@ -205,6 +250,7 @@ void RenderView::init(void) {
     neuralEletricFile = "eletric_potential";
     defaultDirectory = "results";
     colorPattern = "rywgb";
+    angle_3d = 0;
 
     const ConfigList::Config *c;
 
@@ -243,5 +289,11 @@ void RenderView::init(void) {
 
     c = ConfigHolder::get()->get("out_directory");
     if(c) defaultDirectory = c->value;
+
+    c = ConfigHolder::get()->get("out_3d_enable");
+    if(c && strcmp(c->value, "true")==0) {
+        c = ConfigHolder::get()->get("out_3d_angle");
+        if(c) angle_3d = atol(c->value);
+    }
 }
 

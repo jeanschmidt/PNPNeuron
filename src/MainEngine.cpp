@@ -12,7 +12,7 @@ void MainEngine::run(void) {
 }
 
 void MainEngine::populateEletricPotential(void) {
-    printf("*Calculating eletric potencial...\n");
+    fprintf(stderr,"*Calculating eletric potencial...\n");
     universo->rewind();
     for(int a=0; a<num_processor; a++)
         createEletricThread(universo);
@@ -20,7 +20,7 @@ void MainEngine::populateEletricPotential(void) {
 }
 
 void MainEngine::populateGradient(void) {
-    printf("*Calculating ionic flux gradient...\n");
+    fprintf(stderr,"*Calculating ionic flux gradient...\n");
     universo->rewind();
     for(int a=0; a<num_processor; a++)
         createGradientThread(universo);
@@ -28,7 +28,7 @@ void MainEngine::populateGradient(void) {
 } 
 
 void MainEngine::commitChanges(void) {
-    printf("*Commiting changes..\n");
+    fprintf(stderr,"*Commiting changes..\n");
     universo->rewind();
     while(true) {
         Particula *part = universo->getParticula();
@@ -78,7 +78,7 @@ void MainEngine::multiIonicCommit(Particula *part, Particula *part1, unsigned sh
     atual = part->c_sodio + part1->c_sodio;
 
     if(anterior > (atual+0.01) || anterior < (atual-0.01)) {
-        printf("ERROR! %f %f\n", anterior, atual);
+        fprintf(stderr,"ERROR! %f %f\n", anterior, atual);
         exit(__LINE__);
     }
 #endif
@@ -96,7 +96,7 @@ void MainEngine::multiIonicCommit(Particula *part, Particula *part1, unsigned sh
     atual = part->c_potacio + part1->c_potacio;
 
     if(anterior > (atual+0.01) || anterior < (atual-0.01)) {
-        printf("ERROR! %f %f\n", anterior, atual);
+        fprintf(stderr,"ERROR! %f %f\n", anterior, atual);
         exit(__LINE__);
     }
 #endif
@@ -114,7 +114,7 @@ void MainEngine::multiIonicCommit(Particula *part, Particula *part1, unsigned sh
     atual = part->c_cloro + part1->c_cloro;
 
     if(anterior > (atual+0.01) || anterior < (atual-0.01)) {
-        printf("ERROR! %f %f\n", anterior, atual);
+        fprintf(stderr,"ERROR! %f %f\n", anterior, atual);
         exit(__LINE__);
     }
 #endif
@@ -132,7 +132,7 @@ void MainEngine::multiIonicCommit(Particula *part, Particula *part1, unsigned sh
     atual = part->c_calcio + part1->c_calcio;
     
     if(anterior > (atual+0.01) || anterior < (atual-0.01)) {
-        printf("ERROR! %f %f\n", anterior, atual);
+        fprintf(stderr,"ERROR! %f %f\n", anterior, atual);
         exit(__LINE__);
     }
 #endif

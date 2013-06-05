@@ -24,8 +24,8 @@ class GreatEngine {
 #ifdef __TEST__
            long double blah = (d1+d2)*0.5f*dm;
            if(blah > 1.0f) {
-               printf("ERRO\n");
-               printf(" %f %f %f\n", d1, d2, dm);
+               fprintf(stderr,"ERRO\n");
+               fprintf(stderr," %f %f %f\n", d1, d2, dm);
                exit(__LINE__);
            }
 #endif

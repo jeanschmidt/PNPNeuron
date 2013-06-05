@@ -3,7 +3,7 @@
 
 #include "Engine.h"
 
-#define FAIL printf("Fail in test %d in file %s\n", __LINE__, __FILE__); exit(__LINE__);
+#define FAIL fprintf(stderr,"Fail in test %d in file %s\n", __LINE__, __FILE__); exit(__LINE__);
 
 int main(int argc, char **argv) {
 

@@ -8,7 +8,7 @@
 #include "Config.h"
 
 void load(Universe *universo) {
-    printf("*Loading neuron model from file...\n");
+    fprintf(stderr,"*Loading neuron model from file...\n");
     const ConfigList::Config *path = ConfigHolder::get()->get("neuron_path");
     const ConfigList::Config *file = ConfigHolder::get()->get("neuron_file");
     const ConfigList::Config *number = ConfigHolder::get()->get("neuron_number");
@@ -40,7 +40,7 @@ void load(Universe *universo) {
     
     ModelLoad::LoadStatus stat = ml.load();
     if( stat != ModelLoad::LOAD_OK ) {
-        printf("\tError number %d on loading file!\n", stat);
+        fprintf(stderr,"\tError number %d on loading file!\n", stat);
         exit(stat);
     }
 }
@@ -67,21 +67,28 @@ void injectCurrent(Universe *universo, unsigned pontos, float quanto) {
 }
 
 int main(int argc, char **argv) {
-    printf("  ---  PNPNeuron - GNU-GPL v3   ---\n");
-    printf("  ---  by Jean Marcel D Schmidt ---\n");
-    printf("  ---       contact@jschmidt.me ---\n\n\n");
+    fprintf(stderr,"  ---  PNPNeuron - GNU-GPL v3   ---\n");
+    fprintf(stderr,"  ---  by Jean Marcel D Schmidt ---\n");
+    fprintf(stderr,"  ---       contact@jschmidt.me ---\n\n\n");
 
-    printf(" Atual float precision %lu\n", sizeof(long double));
+    fprintf(stderr," Atual float precision %lu\n", sizeof(long double));
     
     for(int a=1; a<argc; a++) {
-        printf(" Parsing config file %s...\n", argv[a]);
-        if( ConfigHolder::get()->parseConfig(argv[a]) == false ) {
-            printf("    ERROR ON PARSING %s\n", argv[a]);
-            exit(__LINE__);
+        if(strcmp("stdin", argv[a])==0) {
+            if( ConfigHolder::get()->parseConfig(stdin) == false ) {
+                fprintf(stderr,"    ERROR ON PARSING stdin\n");
+                exit(__LINE__);
+            }
+        } else {
+            fprintf(stderr," Parsing config file %s...\n", argv[a]);
+            if( ConfigHolder::get()->parseConfig(argv[a]) == false ) {
+                fprintf(stderr,"    ERROR ON PARSING %s\n", argv[a]);
+                exit(__LINE__);
+            }
+            fprintf(stderr,"\n");
         }
-        printf("\n");
     }
-    printf("\n");
+    fprintf(stderr,"\n");
 
     StandartElements::load();
     StandartArea::load();
@@ -91,7 +98,7 @@ int main(int argc, char **argv) {
     RenderView r(universo);
 
     load(universo);
-    printf("*Rendering preview...\n");
+    fprintf(stderr,"*Rendering preview...\n");
     r.renderArea();
     r.renderMembrane();
 

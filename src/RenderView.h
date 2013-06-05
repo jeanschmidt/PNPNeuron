@@ -46,6 +46,8 @@ class RenderView {
         unsigned int rotate_x;
         unsigned int rotate_y;
 
+        unsigned int angle_3d;
+
         Universe *universo;
 
         void init(void); 
